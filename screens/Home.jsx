@@ -46,7 +46,7 @@ function Hero({ query, setQuery }) {
     return (
         <View style={homeStyles.hero}>
             <Text style={homeStyles.heroTitle}>
-                Little Lemon
+                {"Little Lemon"}
             </Text>
 
             <View style={homeStyles.heroContent}>
@@ -184,7 +184,7 @@ function Products({ query, filter }) {
         const productsData = db.getAllSync(`
             SELECT * FROM products;
         `);
-        console.log("productsData", productsData);
+        // console.log("productsData", productsData);
         // return;
         if (productsData.length === 0) {
             axios
@@ -261,7 +261,12 @@ function ProductItem({ item }) {
                     {item.name}
                 </Text>
                 <Text>{item.description}</Text>
-                <Text style={{ fontWeight: "bold" }}>
+                <Text
+                    style={{
+                        fontWeight: "bold",
+                        color: theme.colors.green,
+                    }}
+                >
                     {`$${item.price}`}
                 </Text>
             </View>

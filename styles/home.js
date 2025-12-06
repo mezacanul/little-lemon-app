@@ -16,16 +16,18 @@ export const homeStyles = StyleSheet.create({
         objectFit: "cover",
     },
     heroTitle: {
-        fontSize: 35,
+        fontSize: 45,
         fontWeight: "bold",
         color: theme.colors.yellow,
-        marginBottom: 10,
+        // marginBottom: 5,
+        fontFamily: "MarkaziText-Regular",
     },
     heroSubtitle: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
         color: "white",
         marginBottom: 10,
+        fontFamily: "Karla-Regular",
     },
     heroContent: {
         flexDirection: "row",
@@ -70,6 +72,7 @@ export const homeStyles = StyleSheet.create({
     },
     categoryItemText: {
         fontWeight: "bold",
+        color: theme.colors.green,
     },
     productItem: {
         width: "100%",

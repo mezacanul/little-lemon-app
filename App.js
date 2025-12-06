@@ -5,9 +5,8 @@ import Splash from "./screens/Splash";
 import Onboarding from "./screens/Onboarding";
 import Home from "./screens/Home";
 import Profile from "./screens/Profile";
-import { loadHook, Nexus, Singleton } from "lattice-design";
-import { useEffect, useState } from "react";
-import db from "./cache/db";
+import { Nexus, Singleton } from "lattice-design";
+import { useFonts } from "expo-font";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,30 +27,37 @@ Nexus({
 });
 
 export default function App() {
+    const [fontsLoaded] = useFonts({
+        "Karla-Regular": require("./assets/Karla-Regular.ttf"),
+        "MarkaziText-Regular": require("./assets/MarkaziText-Regular.ttf"),
+    });
+
     return (
         <NavigationContainer>
-            <Stack.Navigator
-                initialRouteName={"Splash"}
-                screenOptions={{ headerShown: false }}
-            >
-                <Stack.Screen
-                    name="Splash"
-                    component={Splash}
-                />
-                <Stack.Screen
-                    name="Onboarding"
-                    component={Onboarding}
-                />
+            {fontsLoaded && (
+                <Stack.Navigator
+                    initialRouteName={"Splash"}
+                    screenOptions={{ headerShown: false }}
+                >
+                    <Stack.Screen
+                        name="Splash"
+                        component={Splash}
+                    />
+                    <Stack.Screen
+                        name="Onboarding"
+                        component={Onboarding}
+                    />
 
-                <Stack.Screen
-                    name="Profile"
-                    component={Profile}
-                />
-                <Stack.Screen
-                    name="Home"
-                    component={Home}
-                />
-            </Stack.Navigator>
+                    <Stack.Screen
+                        name="Profile"
+                        component={Profile}
+                    />
+                    <Stack.Screen
+                        name="Home"
+                        component={Home}
+                    />
+                </Stack.Navigator>
+            )}
         </NavigationContainer>
     );
 }
