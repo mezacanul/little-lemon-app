@@ -1,4 +1,5 @@
 import { View, Text, Switch } from "react-native";
+import theme from "../styles/theme";
 
 export default function SwitchBox({
     label,
@@ -16,7 +17,7 @@ export default function SwitchBox({
             <Switch
                 value={value}
                 onChange={onChange}
-                trackColor={{ true: "blue", false: "gray" }}
+                trackColor={{ true: theme.colors.green, false: "gray" }}
             />
             <Text>{label}</Text>
         </View>

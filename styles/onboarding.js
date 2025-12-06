@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import theme from "./theme";
 
 export const onboardingStyles = StyleSheet.create({
     container: {
@@ -17,7 +18,7 @@ export const onboardingStyles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     text: {
-        color: "green",
+        color: theme.colors.green,
         fontSize: 20,
         fontWeight: "bold",
         textAlign: "center",
@@ -25,7 +26,7 @@ export const onboardingStyles = StyleSheet.create({
     },
     button: {
         width: "40%",
-        backgroundColor: "green",
+        backgroundColor: theme.colors.green,
         paddingHorizontal: 20,
         paddingVertical: 12,
         borderRadius: 8,

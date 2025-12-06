@@ -16,6 +16,7 @@ import { loadHook } from "lattice-design";
 import { NameAvatar } from "../components/Header";
 import db from "../cache/db";
 import { DEFAULT_USER } from "../App";
+import theme from "../styles/theme";
 
 export default function Profile({ navigation }) {
     const [user, setUser] = loadHook("useUser");
@@ -134,8 +135,9 @@ function Avatar() {
                     style={[
                         mainStyles.button,
                         {
-                            backgroundColor: "green",
-                            borderColor: "green",
+                            backgroundColor:
+                                theme.colors.green,
+                            borderColor: theme.colors.green,
                         },
                     ]}
                 >
@@ -254,22 +256,6 @@ function Options({ form, setForm }) {
 function Actions({ onSave, onDiscard, onLogout }) {
     return (
         <View style={{ gap: 10, marginVertical: 20 }}>
-            <TouchableOpacity
-                style={[
-                    mainStyles.button,
-                    {
-                        width: "100%",
-                        backgroundColor: "yellow",
-                        // borderColor: "yellow",
-                    },
-                ]}
-                onPress={onLogout}
-            >
-                <Text style={mainStyles.buttonText}>
-                    {"Logout"}
-                </Text>
-            </TouchableOpacity>
-
             <View style={{ flexDirection: "row", gap: 10 }}>
                 <TouchableOpacity
                     style={[
@@ -287,8 +273,9 @@ function Actions({ onSave, onDiscard, onLogout }) {
                         mainStyles.button,
                         {
                             width: "50%",
-                            backgroundColor: "green",
-                            borderColor: "green",
+                            backgroundColor:
+                                theme.colors.green,
+                            borderColor: theme.colors.green,
                         },
                     ]}
                     onPress={onSave}
@@ -303,6 +290,23 @@ function Actions({ onSave, onDiscard, onLogout }) {
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            <TouchableOpacity
+                style={[
+                    mainStyles.button,
+                    {
+                        width: "100%",
+                        backgroundColor:
+                            theme.colors.yellow,
+                        // borderColor: "yellow",
+                    },
+                ]}
+                onPress={onLogout}
+            >
+                <Text style={mainStyles.buttonText}>
+                    {"Logout"}
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 }

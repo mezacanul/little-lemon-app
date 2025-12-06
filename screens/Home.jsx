@@ -14,6 +14,7 @@ import axios from "axios";
 import db from "../cache/db";
 import { loadHook } from "lattice-design";
 import { toTitleCase } from "../utils/main";
+import theme from "../styles/theme";
 
 const PRODUCTS_URL =
     "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -129,7 +130,7 @@ function CategoryItem({ item, filter, setFilter }) {
 
     const selectedStyles = {
         container: {
-            backgroundColor: "green",
+            backgroundColor: theme.colors.green,
         },
         text: {
             color: "white",

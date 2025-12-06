@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import theme from "./theme";
 
 export const homeStyles = StyleSheet.create({
     hero: {
         width: "100%",
-        backgroundColor: "green",
+        backgroundColor: theme.colors.green,
         // height: 200,
         paddingVertical: 30,
         paddingHorizontal: 20,
@@ -17,7 +18,7 @@ export const homeStyles = StyleSheet.create({
     heroTitle: {
         fontSize: 35,
         fontWeight: "bold",
-        color: "yellow",
+        color: theme.colors.yellow,
         marginBottom: 10,
     },
     heroSubtitle: {

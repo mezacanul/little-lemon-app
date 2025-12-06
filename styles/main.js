@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import theme from "./theme";
 
 export const mainStyles = StyleSheet.create({
     container: {
@@ -14,7 +15,7 @@ export const mainStyles = StyleSheet.create({
         // backgroundColor: "#ffffff",
     },
     backButton: {
-        backgroundColor: "green",
+        backgroundColor: theme.colors.green,
         padding: 10,
         borderRadius: 50,
         width: 35,
