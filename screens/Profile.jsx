@@ -59,11 +59,28 @@ export default function Profile({ navigation }) {
         }
     };
 
+    const removeOldAvatar = async () => {
+        try {
+            console.log("Deleting old avatar", user.image);
+
+            if (!user.image) {
+                return;
+            }
+            const file = new File(user.image);
+            await file.delete();
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
+
     const handleSave = async () => {
         console.log(Date.now());
         console.log("save", form);
         let newImagePath = null;
         if (current) {
+            if (user.image) {
+                await removeOldAvatar();
+            }
             newImagePath = await saveAvatar();
             console.log("newImagePath", newImagePath);
         }
@@ -120,6 +137,7 @@ export default function Profile({ navigation }) {
         setUser(DEFAULT_USER);
         navigation.navigate("Onboarding");
     };
+
     return (
         <Layout
             navigation={navigation}
@@ -183,6 +201,47 @@ function Avatar({ current, setCurrent }) {
 
         console.log("pickedUri", pickedUri);
     };
+
+    const handleRemoveAvatar = async () => {
+        if (!user.image) {
+            Alert.alert(
+                "No avatar",
+                "You don't have an avatar",
+                [
+                    {
+                        text: "OK",
+                    },
+                ]
+            );
+            return;
+        }
+        try {
+            console.log("remove avatar");
+            setCurrent(null);
+            db.runSync(
+                `
+            UPDATE profile_details SET image = NULL;
+            `
+            );
+            setUser({
+                ...user,
+                image: null,
+            });
+            const file = new File(user.image);
+            await file.delete();
+            Alert.alert(
+                "Success",
+                "Avatar removed successfully",
+                [
+                    {
+                        text: "OK",
+                    },
+                ]
+            );
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
     return (
         <View style={profileStyles.avatarContainer}>
             <Text
@@ -224,6 +283,7 @@ function Avatar({ current, setCurrent }) {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[mainStyles.button]}
+                    onPress={handleRemoveAvatar}
                 >
                     <Text style={mainStyles.buttonText}>
                         {"Remove"}
