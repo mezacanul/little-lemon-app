@@ -8,6 +8,7 @@ import {
 import { mainStyles } from "../styles/main";
 import { Ionicons } from "@expo/vector-icons";
 import { loadHook } from "lattice-design";
+import { useState, useEffect } from "react";
 
 const headerItemStyles = StyleSheet.create({
     w30: {
@@ -17,14 +18,19 @@ const headerItemStyles = StyleSheet.create({
 
 export default function Header({ navigation }) {
     const [user] = loadHook("useUser");
-    const routeName =
-        navigation?.getState?.()?.routes?.[
-            navigation.getState().index
-        ]?.name;
+    const [currentRoute, setCurrentRoute] = useState(null);
+
+    useEffect(() => {
+        setCurrentRoute(
+            navigation?.getState?.()?.routes?.[
+                navigation.getState().index
+            ]?.name
+        );
+    }, [navigation]);
 
     return (
         <View style={mainStyles.header}>
-            {routeName !== "Home" ? (
+            {currentRoute && currentRoute !== "Home" ? (
                 <BackButton
                     onPress={() => navigation.pop()}
                     style={[headerItemStyles.w30]}

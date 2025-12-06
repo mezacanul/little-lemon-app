@@ -35,7 +35,7 @@ export const mainStyles = StyleSheet.create({
     profileImage: {
         width: 35,
         height: 35,
-        borderRadius: 15,
+        borderRadius: 50,
         objectFit: "cover",
     },
     button: {

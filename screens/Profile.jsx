@@ -18,6 +18,7 @@ import db from "../cache/db";
 import { DEFAULT_USER } from "../App";
 import theme from "../styles/theme";
 import * as ImagePicker from "expo-image-picker";
+import { File, Paths } from "expo-file-system";
 
 export default function Profile({ navigation }) {
     const [user, setUser] = loadHook("useUser");
@@ -42,25 +43,20 @@ export default function Profile({ navigation }) {
     }, [user]);
 
     const saveAvatar = async () => {
-        console.log("save avatar", current);
-        const fileName = "profile_" + Date.now() + ".jpg";
-        const newPath =
-            FileSystem.documentDirectory + fileName;
+        try {
+            // Saving new file to document directory
+            const fileName =
+                "profile_" + Date.now() + ".jpg";
+            const newPath = `${Paths.document.uri}${fileName}`;
+            const sourceFile = new File(current);
+            const destinationFile = new File(newPath);
+            await sourceFile.copy(destinationFile);
 
-        await FileSystem.copyAsync({
-            from: current,
-            to: newPath,
-        });
-
-        db.runSync(
-            `
-            UPDATE profile_details
-            SET image = ?;
-            `,
-            [newPath]
-        );
-
-        return newPath;
+            return newPath;
+        } catch (error) {
+            console.log("error", error);
+            return "error saving image";
+        }
     };
 
     const handleSave = async () => {
@@ -80,7 +76,7 @@ export default function Profile({ navigation }) {
                 form.name,
                 form.email,
                 form.phone,
-                newImagePath || null,
+                newImagePath,
                 form.orderStatus,
                 form.passwordChanges,
                 form.specialOffers,
@@ -91,7 +87,7 @@ export default function Profile({ navigation }) {
             name: form.name,
             email: form.email,
             phone: form.phone,
-            image: form.image || null,
+            image: newImagePath,
             orderStatus: form.orderStatus,
             passwordChanges: form.passwordChanges,
             specialOffers: form.specialOffers,
