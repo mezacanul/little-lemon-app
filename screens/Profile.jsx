@@ -17,10 +17,12 @@ import { NameAvatar } from "../components/Header";
 import db from "../cache/db";
 import { DEFAULT_USER } from "../App";
 import theme from "../styles/theme";
+import * as ImagePicker from "expo-image-picker";
 
 export default function Profile({ navigation }) {
     const [user, setUser] = loadHook("useUser");
     const [form, setForm] = useState(null);
+    const [current, setCurrent] = useState(null);
 
     useEffect(() => {
         if (user) {
@@ -28,6 +30,7 @@ export default function Profile({ navigation }) {
             setForm({
                 ...user,
                 phone: user.phone || "",
+                image: user.image,
                 orderStatus: user.orderStatus == 1 || false,
                 passwordChanges:
                     user.passwordChanges == 1 || false,
@@ -38,17 +41,46 @@ export default function Profile({ navigation }) {
         }
     }, [user]);
 
-    const handleSave = () => {
+    const saveAvatar = async () => {
+        console.log("save avatar", current);
+        const fileName = "profile_" + Date.now() + ".jpg";
+        const newPath =
+            FileSystem.documentDirectory + fileName;
+
+        await FileSystem.copyAsync({
+            from: current,
+            to: newPath,
+        });
+
+        db.runSync(
+            `
+            UPDATE profile_details
+            SET image = ?;
+            `,
+            [newPath]
+        );
+
+        return newPath;
+    };
+
+    const handleSave = async () => {
+        console.log(Date.now());
         console.log("save", form);
+        let newImagePath = null;
+        if (current) {
+            newImagePath = await saveAvatar();
+            console.log("newImagePath", newImagePath);
+        }
         db.runSync(
             `
             UPDATE profile_details 
-            SET name = ?, email = ?, phone = ?, orderStatus = ?, passwordChanges = ?, specialOffers = ?, newsletter = ?;
+            SET name = ?, email = ?, phone = ?, image = ?, orderStatus = ?, passwordChanges = ?, specialOffers = ?, newsletter = ?;
             `,
             [
                 form.name,
                 form.email,
                 form.phone,
+                newImagePath || null,
                 form.orderStatus,
                 form.passwordChanges,
                 form.specialOffers,
@@ -59,11 +91,13 @@ export default function Profile({ navigation }) {
             name: form.name,
             email: form.email,
             phone: form.phone,
+            image: form.image || null,
             orderStatus: form.orderStatus,
             passwordChanges: form.passwordChanges,
             specialOffers: form.specialOffers,
             newsletter: form.newsletter,
         });
+        setCurrent(null);
         Alert.alert(
             "Success",
             "Profile updated successfully",
@@ -84,6 +118,9 @@ export default function Profile({ navigation }) {
         db.execSync(`
             DELETE FROM profile_details;
             `);
+        // db.execSync(`
+        //     DROP TABLE profile_details;
+        //     `);
         setUser(DEFAULT_USER);
         navigation.navigate("Onboarding");
     };
@@ -95,7 +132,10 @@ export default function Profile({ navigation }) {
             <Text style={styles.subtitle}>
                 {"Personal Information"}
             </Text>
-            <Avatar />
+            <Avatar
+                current={current}
+                setCurrent={setCurrent}
+            />
             {form && (
                 <PersonalInfo
                     form={form}
@@ -117,7 +157,36 @@ export default function Profile({ navigation }) {
     );
 }
 
-function Avatar() {
+function Avatar({ current, setCurrent }) {
+    const [user, setUser] = loadHook("useUser");
+
+    const handleChangeAvatar = async () => {
+        console.log("change avatar");
+        // 1. Ask permission
+        const permission =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+            Alert.alert(
+                "Permission required",
+                "Please allow photo access"
+            );
+            return;
+        }
+
+        // 2. Let user pick image
+        const result =
+            await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.8,
+            });
+
+        if (result.canceled) return;
+        const pickedUri = result.assets[0].uri;
+        setCurrent(pickedUri);
+
+        console.log("pickedUri", pickedUri);
+    };
     return (
         <View style={profileStyles.avatarContainer}>
             <Text
@@ -126,11 +195,17 @@ function Avatar() {
                 {"Avatar"}
             </Text>
             <View style={profileStyles.avatarOptions}>
-                {/* <Image
-                    source={require("../assets/profile.png")}
-                    style={profileStyles.avatar}
-                /> */}
-                <NameAvatar size="lg" />
+                {(current || user.image) && (
+                    <Image
+                        source={{
+                            uri: current || user.image,
+                        }}
+                        style={profileStyles.avatar}
+                    />
+                )}
+                {!(current || user.image) && (
+                    <NameAvatar size="lg" />
+                )}
                 <TouchableOpacity
                     style={[
                         mainStyles.button,
@@ -140,6 +215,7 @@ function Avatar() {
                             borderColor: theme.colors.green,
                         },
                     ]}
+                    onPress={handleChangeAvatar}
                 >
                     <Text
                         style={[

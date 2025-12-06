@@ -16,6 +16,7 @@ const headerItemStyles = StyleSheet.create({
 });
 
 export default function Header({ navigation }) {
+    const [user] = loadHook("useUser");
     const routeName =
         navigation?.getState?.()?.routes?.[
             navigation.getState().index
@@ -52,11 +53,13 @@ export default function Header({ navigation }) {
                     { alignItems: "flex-end" },
                 ]}
             >
-                <NameAvatar />
-                {/* <Image
-                    source={require("../assets/profile.png")}
-                    style={mainStyles.profileImage}
-                /> */}
+                {!user.image && <NameAvatar />}
+                {user.image && (
+                    <Image
+                        source={{ uri: user.image }}
+                        style={mainStyles.profileImage}
+                    />
+                )}
             </TouchableOpacity>
         </View>
     );

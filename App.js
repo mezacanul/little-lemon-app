@@ -14,6 +14,7 @@ export const DEFAULT_USER = {
     name: "",
     email: "",
     phone: "",
+    image: null,
     orderStatus: false,
     passwordChanges: false,
     specialOffers: false,

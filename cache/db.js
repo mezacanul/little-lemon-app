@@ -9,6 +9,7 @@ db.execSync(`
     name TEXT NOT NULL,
     email TEXT NOT NULL,
     phone TEXT NULL,
+    image TEXT NULL,
     orderStatus BOOLEAN NOT NULL DEFAULT FALSE,
     passwordChanges BOOLEAN NOT NULL DEFAULT FALSE,
     specialOffers BOOLEAN NOT NULL DEFAULT FALSE,
