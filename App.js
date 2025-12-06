@@ -28,19 +28,6 @@ Nexus({
 });
 
 export default function App() {
-    useEffect(() => {
-        // if (!row) {
-        //     db.execSync(`
-        //     INSERT INTO profile_details (name, email)
-        //     VALUES ("John Doe", "john.doe@example.com");
-        // `);
-        // }
-        // db.execSync(`
-        //     INSERT INTO profile_details (name, email)
-        //     VALUES (?, ?, ?, ?, ?, ?, ?);
-        // `, [defaultUser.name, defaultUser.email, defaultUser.phone, defaultUser.orderStatus, defaultUser.passwordChanges, defaultUser.specialOffers, defaultUser.newsletter]);
-    }, []);
-
     return (
         <NavigationContainer>
             <Stack.Navigator

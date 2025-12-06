@@ -13,20 +13,29 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import db from "../cache/db";
 import { loadHook } from "lattice-design";
+import { toTitleCase } from "../utils/main";
 
 const PRODUCTS_URL =
     "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
 
 export default function Home({ navigation }) {
     const [query, setQuery] = useState("");
+    const [filter, setFilter] = useState([]);
+
     return (
         <Layout navigation={navigation}>
             <Hero
                 query={query}
                 setQuery={setQuery}
             />
-            <Categories />
-            <Products query={query} />
+            <Categories
+                filter={filter}
+                setFilter={setFilter}
+            />
+            <Products
+                query={query}
+                filter={filter}
+            />
         </Layout>
     );
 }
@@ -68,15 +77,13 @@ function Hero({ query, setQuery }) {
     );
 }
 
-function Categories() {
+function Categories({ filter, setFilter }) {
     const categories = [
         "Starters",
         "Mains",
         "Desserts",
         "Drinks",
-        "Breakfast",
-        "Lunch",
-        "Dinner",
+        "Sides",
         "Other",
     ];
     return (
@@ -92,7 +99,13 @@ function Categories() {
 
             <FlatList
                 data={categories}
-                renderItem={CategoryItem}
+                renderItem={({ item }) => (
+                    <CategoryItem
+                        item={item}
+                        filter={filter}
+                        setFilter={setFilter}
+                    />
+                )}
                 keyExtractor={(item) => item}
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -105,18 +118,66 @@ function Categories() {
     );
 }
 
-function CategoryItem({ item }) {
+function CategoryItem({ item, filter, setFilter }) {
+    const handleFilter = () => {
+        if (filter.includes(item)) {
+            setFilter(filter.filter((f) => f !== item));
+        } else {
+            setFilter([...filter, item]);
+        }
+    };
+
+    const selectedStyles = {
+        container: {
+            backgroundColor: "green",
+        },
+        text: {
+            color: "white",
+        },
+    };
+
     return (
-        <TouchableOpacity style={homeStyles.categoryItem}>
-            <Text style={homeStyles.categoryItemText}>
+        <TouchableOpacity
+            style={[
+                homeStyles.categoryItem,
+                filter.includes(item) &&
+                    selectedStyles.container,
+            ]}
+            onPress={handleFilter}
+        >
+            <Text
+                style={[
+                    homeStyles.categoryItemText,
+                    filter.includes(item) &&
+                        selectedStyles.text,
+                ]}
+            >
                 {item}
             </Text>
         </TouchableOpacity>
     );
 }
 
-function Products({ query }) {
+function Products({ query, filter }) {
     const [products, setProducts] = loadHook("useProducts");
+    const [filtered, setFiltered] = useState(null);
+
+    useEffect(() => {
+        const newFiltered = products
+            .filter(
+                (product) =>
+                    filter.length === 0 ||
+                    filter.includes(
+                        toTitleCase(product.category)
+                    )
+            )
+            .filter((product) =>
+                product.name
+                    .toLowerCase()
+                    .includes(query.toLowerCase())
+            );
+        setFiltered(newFiltered);
+    }, [query, filter]);
 
     useEffect(() => {
         const productsData = db.getAllSync(`
@@ -129,6 +190,7 @@ function Products({ query }) {
                 .get(PRODUCTS_URL)
                 .then((response) => {
                     setProducts(response.data.menu);
+                    setFiltered(response.data.menu);
                     db.withTransactionSync(() => {
                         response.data.menu.forEach((prd) =>
                             db.runSync(
@@ -147,37 +209,30 @@ function Products({ query }) {
                 });
         } else {
             setProducts(productsData);
+            setFiltered(productsData);
         }
     }, []);
 
-    // useEffect(() => {
-    //     if (query) {
-    //         setProducts(
-    //             products.filter((product) =>
-    //                 product.name
-    //                     .toLowerCase()
-    //                     .includes(query.toLowerCase())
-    //             )
-    //         );
-    //     } else {
-    //         setProducts(productsData);
-    //     }
-    // }, [query]);
-
     return (
         <View style={{ width: "100%" }}>
-            {products
-                .filter((product) =>
-                    product.name
-                        .toLowerCase()
-                        .includes(query.toLowerCase())
-                )
-                .map((product) => (
+            {filtered &&
+                filtered.map((product) => (
                     <ProductItem
                         key={product.name}
                         item={product}
                     />
                 ))}
+
+            {filtered && filtered.length === 0 && (
+                <Text
+                    style={{
+                        textAlign: "center",
+                        paddingVertical: 50,
+                    }}
+                >
+                    {"No products found"}
+                </Text>
+            )}
         </View>
     );
 }
