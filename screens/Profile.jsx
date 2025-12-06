@@ -4,6 +4,7 @@ import {
     View,
     Image,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 import { profileStyles } from "../styles/profile";
 import { mainStyles } from "../styles/main";
@@ -62,6 +63,15 @@ export default function Profile({ navigation }) {
             specialOffers: form.specialOffers,
             newsletter: form.newsletter,
         });
+        Alert.alert(
+            "Success",
+            "Profile updated successfully",
+            [
+                {
+                    text: "OK",
+                },
+            ]
+        );
     };
 
     const handleDiscard = () => {

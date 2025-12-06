@@ -99,7 +99,7 @@ export default function Login({ navigation }) {
                 onPress={handleSubmit}
             >
                 <Text style={onboardingStyles.buttonText}>
-                    {"Login"}
+                    {"Next"}
                 </Text>
             </TouchableOpacity>
 
